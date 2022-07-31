@@ -47,5 +47,6 @@ def execute_experiment(
 
     # get metrics of the models and compare model metrics
     logger.debug('Comparing metrics')
-    publish_model_metric_comparison(logger, get_model_metrics(logger, y_test, y_pred),
-                                    get_model_metrics(logger, y_test_res, y_pred_res))
+    publish_model_metric_comparison(
+        logger, get_model_metrics(logger, y_test, y_pred),
+        get_model_metrics(logger, y_test_res, y_pred_res))
