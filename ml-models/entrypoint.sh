@@ -5,8 +5,8 @@ echo "**************************************************************************
 echo "[INFO] running python unittest"
 python -m unittest discover "$CONTAINER_BASE_DIR"/ || exit 1
 
-if [[ $MODE == 'pipe' ]]; then
+if [[ $MODE == 'experiment' ]]; then
   echo "***************************************************************************"
-  echo "[INFO] executing models"
+  echo "[INFO] executing experiments"
   python -u "$CONTAINER_BASE_DIR"/main.py
 fi
