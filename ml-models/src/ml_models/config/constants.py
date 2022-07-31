@@ -5,3 +5,4 @@ LOGGER_CONFIG_FILE = '/app/ml_models/config/log_config.yml'
 # ML params
 TEST_SIZE = 0.33
 RANDOM_STATE = 42
+N_JOBS = -1
