@@ -33,19 +33,17 @@ def get_model_metrics(logger: Logger, y_test: Series, y_pred: Series) -> dict:
     metrics['precision'] = precision_score(y_test, y_pred)
     metrics['g_mean'] = sqrt(metrics['recall'] * metrics['precision'])
     metrics['roc_auc_score'] = roc_auc_score(y_test, y_pred)
-
     logger.info(metrics.__str__())
-
     return metrics
 
 
 def publish_model_metric_comparison(logger: Logger, model_metrics: Dict[str, float],
-                                    model_metrics_res: Dict[str, float]) -> None:
+                                    model_metrics_res: Dict[str, float]) -> Dict[str, dict]:
     result = {}
     metric_names = set(list(model_metrics.keys()) + list(model_metrics_res.keys()))
     for metric in metric_names:
         result[metric] = {}
         result[metric]['basic_points'] = model_metrics_res[metric] - model_metrics[metric]
         result[metric]['percentage'] = (model_metrics_res[metric] - model_metrics[metric]) / model_metrics[metric]
-
     logger.info(result.__str__())
+    return result
