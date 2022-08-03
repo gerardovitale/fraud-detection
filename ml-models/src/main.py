@@ -15,6 +15,8 @@ def main() -> None:
     X, y = load_data()
     logger.debug('Data loaded')
 
+    ## experiment_id standard model => <resampling_strategy> + <ml_model> + <additional_method>
+
     # ==================== ==================== ==================== ==================== ====================
     # ROS + LogisticRegression
     experiment_id = 'ROS + LogReg'

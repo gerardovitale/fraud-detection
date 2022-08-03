@@ -1,49 +1,46 @@
+import json
 from logging import Logger
-from typing import Dict
+from typing import Any, Dict, List
 
+from imblearn.metrics import geometric_mean_score
 from numpy import sqrt
 from pandas import Series
-from sklearn.metrics import f1_score, recall_score, precision_score, roc_auc_score
+from sklearn.metrics import f1_score, precision_score, recall_score, roc_auc_score
 
 
-def get_metrics(y: Series) -> dict:
-    return {
-        'magnitude': {
-            'rows': y.__len__(),
-            'non_fraud': y.value_counts()[0],
-            'fraud': y.value_counts()[1],
-        },
-        'percentage': {
-            'non_fraud': y.value_counts()[0] / y.__len__() * 100,
-            'fraud': y.value_counts()[1] / y.__len__() * 100,
-        }
+def get_data_metrics(logger: Logger, y: Series, subset: str, res_method: str = None) -> List[Dict[str, Any]]:
+    metrics = [{
+        'class': int(y.index[i]),
+        'count': int(y.value_counts()[i]),
+        'percent': float(y.value_counts()[i] / y.__len__()),
+        'subset': subset,
+        'is_resampled': True if res_method else False,
+        'res_method': res_method if res_method else '',
+    } for i in y.unique()]
+    logger.info(json.dumps(metrics))
+    return metrics
+
+
+def get_model_metrics(logger: Logger, y_test: Series, y_pred: Series) -> Dict[str, float]:
+    metrics = {
+        'f_score': float(f1_score(y_test, y_pred)),
+        'recall': float(recall_score(y_test, y_pred)),
+        'precision': float(precision_score(y_test, y_pred)),
+        'g_mean': float(geometric_mean_score(y_test, y_pred)),
+        'roc_auc_score': float(roc_auc_score(y_test, y_pred)),
     }
-
-
-def publish_preprocessing_metrics(logger: Logger, y: Series, y_val: Series = None) -> None:
-    logger.info(get_metrics(y).__str__())
-    if getattr(y_val, 'all', False) and isinstance(y_val, Series):
-        logger.info(get_metrics(y_val).__str__())
-
-
-def get_model_metrics(logger: Logger, y_test: Series, y_pred: Series) -> dict:
-    metrics = {}
-    metrics['f_score'] = f1_score(y_test, y_pred)
-    metrics['recall'] = recall_score(y_test, y_pred)
-    metrics['precision'] = precision_score(y_test, y_pred)
-    metrics['g_mean'] = sqrt(metrics['recall'] * metrics['precision'])
-    metrics['roc_auc_score'] = roc_auc_score(y_test, y_pred)
-    logger.info(metrics.__str__())
+    logger.info(json.dumps(metrics))
     return metrics
 
 
 def publish_model_metric_comparison(logger: Logger, model_metrics: Dict[str, float],
                                     model_metrics_res: Dict[str, float]) -> Dict[str, dict]:
-    result = {}
+    metrics_comparison = {}
     metric_names = set(list(model_metrics.keys()) + list(model_metrics_res.keys()))
     for metric in metric_names:
-        result[metric] = {}
-        result[metric]['basic_points'] = model_metrics_res[metric] - model_metrics[metric]
-        result[metric]['percentage'] = (model_metrics_res[metric] - model_metrics[metric]) / model_metrics[metric]
-    logger.info(result.__str__())
-    return result
+        metrics_comparison[metric] = {
+            'basic_points': model_metrics_res[metric] - model_metrics[metric],
+            'percentage': (model_metrics_res[metric] - model_metrics[metric]) / model_metrics[metric]
+        }
+    logger.info(json.dumps(metrics_comparison))
+    return metrics_comparison

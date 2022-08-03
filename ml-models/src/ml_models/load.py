@@ -1,7 +1,7 @@
 from typing import Tuple
 
 import pandas as pd
-from pandas import Series, DataFrame
+from pandas import DataFrame, Series
 
 from ml_models.config.constants import DATA_PATH
 

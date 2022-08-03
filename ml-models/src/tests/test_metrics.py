@@ -1,10 +1,9 @@
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
+from ml_models.metrics import (get_data_metrics, get_model_metrics,
+                               publish_model_metric_comparison)
 from pandas import Series
-
-from ml_models.metrics import get_metrics, get_model_metrics, publish_preprocessing_metrics, \
-    publish_model_metric_comparison
 
 
 class TestMetrics(unittest.TestCase):
@@ -24,36 +23,28 @@ class TestMetrics(unittest.TestCase):
         self.mock_logger = MagicMock()
 
     def test_get_metrics(self):
-        test_data = Series(data=[0, 1, 0, 0, 1, 1])
-        expected_metrics = {
-            'magnitude': {'rows': 6, 'non_fraud': 3, 'fraud': 3},
-            'percentage': {'non_fraud': 50.0, 'fraud': 50.0},
-        }
+        test_data1 = Series(data=[0, 1, 0, 0, 1, 1])
+        test_data2 = Series(data=[0, 0, 0, 0, 0, 1])
+        expected_metrics1 = [
+            {'class': 0, 'count': 3, 'percent': 0.5, 'subset': 'original', 'is_resampled': False, 'res_method': ''},
+            {'class': 1, 'count': 3, 'percent': 0.5, 'subset': 'original', 'is_resampled': False, 'res_method': ''}]
+        expected_metrics2 = [
+            {'class': 0, 'count': 5, 'percent': 0.8333333333333334, 'subset': 'test', 'is_resampled': True, 'res_method': 'ros'},
+            {'class': 1, 'count': 1, 'percent': 0.16666666666666666, 'subset': 'test', 'is_resampled': True, 'res_method': 'ros'}]
+        expected_list_sum = [
+            {'class': 0, 'count': 3, 'percent': 0.5, 'subset': 'original', 'is_resampled': False, 'res_method': ''},
+            {'class': 1, 'count': 3, 'percent': 0.5, 'subset': 'original', 'is_resampled': False, 'res_method': ''},
+            {'class': 0, 'count': 5, 'percent': 0.8333333333333334, 'subset': 'test', 'is_resampled': True, 'res_method': 'ros'},
+            {'class': 1, 'count': 1, 'percent': 0.16666666666666666, 'subset': 'test', 'is_resampled': True, 'res_method': 'ros'}]
 
-        actual_metrics = get_metrics(test_data)
-
-        self.assertEqual(actual_metrics, expected_metrics)
-
-    @patch('ml_models.metrics.get_metrics')
-    def test_publish_preprocessing_metrics(self, mock_get_metrics: MagicMock):
-        # when both y and y_val are passed as arguments
-        test_y_train = Series(data=[0, 1, 0, 0, 1, 1])
-        test_y_test = Series(data=[0, 0, 0, 0, 0, 1])
-
-        publish_preprocessing_metrics(self.mock_logger, test_y_train, test_y_test)
-
+        actual_metrics1 = get_data_metrics(self.mock_logger, test_data1, 'original')
+        actual_metrics2 = get_data_metrics(self.mock_logger, test_data2, 'test', 'ros')
+        
         self.assertEqual(self.mock_logger.info.call_count, 2)
-        self.assertEqual(mock_get_metrics.call_count, 2)
+        self.assertEqual(actual_metrics1, expected_metrics1)
+        self.assertEqual(actual_metrics2, expected_metrics2)
+        self.assertEqual(actual_metrics1 + actual_metrics2, expected_list_sum)
 
-        # when just y is passed as argument
-        self.mock_logger.reset_mock()
-        mock_get_metrics.reset_mock()
-        test_y_train = Series(data=[0, 1, 0, 0, 1, 1])
-
-        publish_preprocessing_metrics(self.mock_logger, test_y_train)
-
-        self.assertEqual(self.mock_logger.info.call_count, 1)
-        self.assertEqual(mock_get_metrics.call_count, 1)
 
     def test_get_model_metrics(self):
         test_y_test = Series(data=[0, 1, 0, 0, 1, 1])

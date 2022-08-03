@@ -5,28 +5,30 @@ from sklearn.model_selection import train_test_split
 
 from ml_models.config.constants import RANDOM_STATE, TEST_SIZE
 from ml_models.config.logger import get_logger
-from ml_models.metrics import publish_preprocessing_metrics, publish_model_metric_comparison, get_model_metrics
+from ml_models.metrics import (get_data_metrics, get_model_metrics,
+                               publish_model_metric_comparison)
 
 
 def execute_experiment(
-        experiment_identifier: str,
-        X: DataFrame,
-        y: Series,
-        resampling_strategy: BaseSampler,
-        estimator: BaseEstimator,
+    experiment_identifier: str,
+    X: DataFrame,
+    y: Series,
+    resampling_strategy: BaseSampler,
+    estimator: BaseEstimator,
 ) -> None:
     logger = get_logger(experiment_identifier)
     logger.debug('Beginning of the experiment')
 
     # preprocessing metrics before resampling
-    publish_preprocessing_metrics(logger, y)
+    get_data_metrics(logger, y, subset='main')
 
     # resampling data
     logger.debug('Resampling data')
     X_res, y_res = resampling_strategy.fit_resample(X, y)
 
     # preprocessing metrics after resampling
-    publish_preprocessing_metrics(logger, y_res)
+    res_method = experiment_identifier.replace(' ', '').split('+')[0]
+    get_data_metrics(logger, y_res, 'main', res_method)
 
     # split dataset into training and testing samples
     # try to add a splitting strategy as a function
@@ -37,8 +39,10 @@ def execute_experiment(
         X_res, y_res, test_size=TEST_SIZE, random_state=RANDOM_STATE)
 
     # preprocessing metrics after splitting
-    publish_preprocessing_metrics(logger, y_train, y_test)
-    publish_preprocessing_metrics(logger, y_train_res, y_test_res)
+    get_data_metrics(logger, y_train, 'train')
+    get_data_metrics(logger, y_test, 'test')
+    get_data_metrics(logger, y_train_res, 'train', res_method)
+    get_data_metrics(logger, y_test_res, 'test', res_method)
 
     # fit ml model and get predictions based on test samples
     logger.debug('Training ML models')
