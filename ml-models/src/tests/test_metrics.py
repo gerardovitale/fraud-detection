@@ -1,9 +1,9 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
-from ml_models.metrics import (get_data_metrics, get_model_metrics,
-                               publish_model_metric_comparison)
 from pandas import Series
+
+from ml_models.metrics import get_data_metrics, get_model_metrics, publish_model_metric_comparison
 
 
 class TestMetrics(unittest.TestCase):
@@ -39,12 +39,11 @@ class TestMetrics(unittest.TestCase):
 
         actual_metrics1 = get_data_metrics(self.mock_logger, test_data1, 'original')
         actual_metrics2 = get_data_metrics(self.mock_logger, test_data2, 'test', 'ros')
-        
+
         self.assertEqual(self.mock_logger.info.call_count, 2)
         self.assertEqual(actual_metrics1, expected_metrics1)
         self.assertEqual(actual_metrics2, expected_metrics2)
         self.assertEqual(actual_metrics1 + actual_metrics2, expected_list_sum)
-
 
     def test_get_model_metrics(self):
         test_y_test = Series(data=[0, 1, 0, 0, 1, 1])

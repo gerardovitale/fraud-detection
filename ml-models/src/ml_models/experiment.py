@@ -10,11 +10,11 @@ from ml_models.metrics import (get_data_metrics, get_model_metrics,
 
 
 def execute_experiment(
-    experiment_identifier: str,
-    X: DataFrame,
-    y: Series,
-    resampling_strategy: BaseSampler,
-    estimator: BaseEstimator,
+        experiment_identifier: str,
+        X: DataFrame,
+        y: Series,
+        resampling_strategy: BaseSampler,
+        estimator: BaseEstimator,
 ) -> None:
     logger = get_logger(experiment_identifier)
     logger.debug('Beginning of the experiment')

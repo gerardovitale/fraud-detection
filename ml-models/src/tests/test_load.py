@@ -1,8 +1,9 @@
 from unittest import TestCase
 
+from pandas import DataFrame, Series
+
 from ml_models.config.constants import TEST_DATA_PATH
 from ml_models.load import load_data
-from pandas import DataFrame, Series
 
 
 class TestExperiment(TestCase):

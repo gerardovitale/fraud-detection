@@ -4,7 +4,6 @@ from unittest.mock import MagicMock, patch
 from ml_models.config.constants import TEST_DATA_PATH
 from ml_models.experiment import execute_experiment
 from ml_models.load import load_data
-
 from tests.mock_estimator import MockEstimator
 
 

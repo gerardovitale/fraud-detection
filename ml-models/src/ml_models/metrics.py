@@ -3,7 +3,6 @@ from logging import Logger
 from typing import Any, Dict, List
 
 from imblearn.metrics import geometric_mean_score
-from numpy import sqrt
 from pandas import Series
 from sklearn.metrics import f1_score, precision_score, recall_score, roc_auc_score
 

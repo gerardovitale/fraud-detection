@@ -23,7 +23,7 @@ handlers:
 loggers:
   main:
     level: DEBUG
-    handlers: [ console , file_handler]
+    handlers: [ console , file_handler ]
     propagate: no
 
 root:
