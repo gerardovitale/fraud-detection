@@ -5,8 +5,7 @@ from sklearn.model_selection import train_test_split
 
 from ml_models.config.constants import RANDOM_STATE, TEST_SIZE
 from ml_models.config.logger import get_logger
-from ml_models.metrics import (get_data_metrics, get_model_metrics,
-                               publish_model_metric_comparison)
+from ml_models.metrics import get_data_metrics, get_model_metrics
 
 
 def execute_experiment(
@@ -50,7 +49,6 @@ def execute_experiment(
     y_pred_res = estimator.fit(X_train_res, y_train_res).predict(X_test_res)
 
     # get metrics of the models and compare model metrics
-    logger.debug('Comparing metrics')
-    publish_model_metric_comparison(
-        logger, get_model_metrics(logger, y_test, y_pred),
-        get_model_metrics(logger, y_test_res, y_pred_res))
+    logger.debug('Calculating model metrics')
+    get_model_metrics(logger, y_test, y_pred, experiment_identifier)
+    get_model_metrics(logger, y_test_res, y_pred_res, experiment_identifier, True)
