@@ -131,3 +131,4 @@ dmypy.json
 # Additionals 
 .DS_Store
 .Trash-0
+.idea
