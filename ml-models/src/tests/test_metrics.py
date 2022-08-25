@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 
 from pandas import Series
 
-from ml_models.metrics import get_data_metrics, get_model_metrics, publish_model_metric_comparison
+from ml_models.metrics import get_data_metrics, get_model_metrics
 
 
 class TestMetrics(unittest.TestCase):
@@ -48,9 +48,9 @@ class TestMetrics(unittest.TestCase):
     def test_get_model_metrics(self):
         test_y_test = Series(data=[0, 1, 0, 0, 1, 1])
         test_y_pred = Series(data=[0, 0, 0, 0, 0, 1])
-        expected_keys = ['f_score', 'recall', 'precision', 'g_mean', 'roc_auc_score']
+        expected_keys = ['is_resampled', 'exp_id', 'f_score', 'recall', 'precision', 'g_mean', 'roc_auc_score']
 
-        actual_metrics = get_model_metrics(self.mock_logger, test_y_test, test_y_pred)
+        actual_metrics = get_model_metrics(self.mock_logger, test_y_test, test_y_pred, 'test_exp', True)
 
         self.assertIsInstance(actual_metrics, dict)
         self.mock_f1.assert_called_once()
@@ -59,21 +59,5 @@ class TestMetrics(unittest.TestCase):
         self.mock_roc_auc.assert_called_once()
         self.mock_logger.info.assert_called_once()
         self.assertEqual(expected_keys, list(actual_metrics.keys()))
-
-    def test_publish_model_metric_comparison(self):
-        test_metrics = {'f_score': 0.70, 'recall': 0.72, 'precision': 0.65, 'g_mean': 0.67, 'roc_auc_score': 0.80}
-        test_metrics_res = {'f_score': 0.95, 'recall': 0.90, 'precision': 0.77, 'g_mean': 0.91, 'roc_auc_score': 0.88}
-        expected_comparison = {
-            'f_score': {'basic_points': 0.25, 'percentage': 0.35714286},
-            'recall': {'basic_points': 0.18, 'percentage': 0.25},
-            'precision': {'basic_points': 0.12, 'percentage': 0.18461538},
-            'g_mean': {'basic_points': 0.24, 'percentage': 0.35820896},
-            'roc_auc_score': {'basic_points': 0.08, 'percentage': 0.1},
-        }
-
-        actual_comparison = publish_model_metric_comparison(self.mock_logger, test_metrics, test_metrics_res)
-
-        self.mock_logger.info.assert_called_once()
-        for key, value in actual_comparison.items():
-            self.assertAlmostEqual(expected_comparison[key]['basic_points'], value['basic_points'])
-            self.assertAlmostEqual(expected_comparison[key]['percentage'], value['percentage'])
+        self.assertEqual(True, actual_metrics['is_resampled'])
+        self.assertEqual('test_exp', actual_metrics['exp_id'])

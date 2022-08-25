@@ -10,8 +10,8 @@ def create_message(metric_id: str, metrics: Union[dict, list]):
     return {'message': {'metric_id': metric_id, 'data': metrics}}
 
 
-def get_data_metrics(logger: Logger, y: Series, subset: str, experiment_id: str, is_resampled: bool = False
-                     ) -> List[Dict[str, Any]]:
+def get_data_metrics(logger: Logger, y: Series, subset: str, experiment_id: str,
+                     is_resampled: bool = False) -> List[Dict[str, Any]]:
     metrics = [{
         'class': int(y.value_counts().index[i]),
         'count': int(y.value_counts()[i]),
@@ -24,8 +24,11 @@ def get_data_metrics(logger: Logger, y: Series, subset: str, experiment_id: str,
     return metrics
 
 
-def get_model_metrics(logger: Logger, y_test: Series, y_pred: Series) -> Dict[str, float]:
+def get_model_metrics(logger: Logger, y_test: Series, y_pred: Series, experiment_id: str,
+                      is_resampled: bool = False) -> Dict[str, float]:
     metrics = {
+        'is_resampled': is_resampled,
+        'exp_id': experiment_id,
         'f_score': float(f1_score(y_test, y_pred)),
         'recall': float(recall_score(y_test, y_pred)),
         'precision': float(precision_score(y_test, y_pred)),
@@ -34,16 +37,3 @@ def get_model_metrics(logger: Logger, y_test: Series, y_pred: Series) -> Dict[st
     }
     logger.info(create_message('model', metrics))
     return metrics
-
-
-def publish_model_metric_comparison(logger: Logger, model_metrics: Dict[str, float],
-                                    model_metrics_res: Dict[str, float]) -> Dict[str, dict]:
-    metrics_comparison = {}
-    metric_names = set(list(model_metrics.keys()) + list(model_metrics_res.keys()))
-    for metric in metric_names:
-        metrics_comparison[metric] = {
-            'basic_points': model_metrics_res[metric] - model_metrics[metric],
-            'percentage': (model_metrics_res[metric] - model_metrics[metric]) / model_metrics[metric]
-        }
-    logger.info(create_message('comparison', metrics_comparison))
-    return metrics_comparison

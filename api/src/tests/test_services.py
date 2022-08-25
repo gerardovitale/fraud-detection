@@ -36,7 +36,7 @@ class TestServices(unittest.TestCase):
         test_cases = [
             ('model', False),
             ('dataframe', False),
-            ('comparison', False),
+            ('comparison', True),
             ('', True),
             ('something different', True),
             (None, True),

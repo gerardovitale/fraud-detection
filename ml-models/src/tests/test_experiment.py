@@ -11,15 +11,12 @@ class TestExperiment(TestCase):
     def setUp(self) -> None:
         logger_patcher = patch('ml_models.experiment.get_logger')
         get_data_metrics_patcher = patch('ml_models.experiment.get_data_metrics')
-        publish_comparison_patcher = patch('ml_models.experiment.publish_model_metric_comparison')
         get_model_metrics_patcher = patch('ml_models.experiment.get_model_metrics')
         self.addCleanup(logger_patcher.stop)
         self.addCleanup(get_data_metrics_patcher.stop)
-        self.addCleanup(publish_comparison_patcher.stop)
         self.addCleanup(get_model_metrics_patcher.stop)
         self.mock_logger = logger_patcher.start()
         self.mock_get_data_metrics = get_data_metrics_patcher.start()
-        self.mock_publish_comparison = publish_comparison_patcher.start()
         self.mock_get_model_metrics = get_model_metrics_patcher.start()
 
     def test_something(self):
@@ -35,4 +32,3 @@ class TestExperiment(TestCase):
         self.assertEqual(estimator.predict_call_list.__len__(), 2)
         self.assertEqual(self.mock_get_data_metrics.call_count, 6)
         self.assertEqual(self.mock_get_model_metrics.call_count, 2)
-        self.assertEqual(self.mock_publish_comparison.call_count, 1)
