@@ -20,7 +20,7 @@ def execute_experiment(
     logger.debug('Beginning of the experiment')
 
     # preprocessing metrics before resampling
-    get_data_metrics(logger, y, subset='main')
+    get_data_metrics(logger, y, 'main', experiment_identifier)
 
     # resampling data
     logger.debug('Resampling data')
@@ -28,7 +28,7 @@ def execute_experiment(
 
     # preprocessing metrics after resampling
     res_method = experiment_identifier.replace(' ', '').split('+')[0]
-    get_data_metrics(logger, y_res, 'main', res_method)
+    get_data_metrics(logger, y_res, 'main', experiment_identifier, True)
 
     # split dataset into training and testing samples
     # try to add a splitting strategy as a function
@@ -39,10 +39,10 @@ def execute_experiment(
         X_res, y_res, test_size=TEST_SIZE, random_state=RANDOM_STATE)
 
     # preprocessing metrics after splitting
-    get_data_metrics(logger, y_train, 'train')
-    get_data_metrics(logger, y_test, 'test')
-    get_data_metrics(logger, y_train_res, 'train', res_method)
-    get_data_metrics(logger, y_test_res, 'test', res_method)
+    get_data_metrics(logger, y_train, 'train', experiment_identifier)
+    get_data_metrics(logger, y_test, 'test', experiment_identifier)
+    get_data_metrics(logger, y_train_res, 'train', experiment_identifier, True)
+    get_data_metrics(logger, y_test_res, 'test', experiment_identifier, True)
 
     # fit ml model and get predictions based on test samples
     logger.debug('Training ML models')

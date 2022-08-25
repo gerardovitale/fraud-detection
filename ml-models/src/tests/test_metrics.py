@@ -26,19 +26,19 @@ class TestMetrics(unittest.TestCase):
         test_data1 = Series(data=[0, 1, 0, 0, 1, 1])
         test_data2 = Series(data=[0, 0, 0, 0, 0, 1])
         expected_metrics1 = [
-            {'class': 0, 'count': 3, 'percent': 0.5, 'subset': 'original', 'is_resampled': False, 'res_method': ''},
-            {'class': 1, 'count': 3, 'percent': 0.5, 'subset': 'original', 'is_resampled': False, 'res_method': ''}]
+            {'class': 0, 'count': 3, 'percent': 0.5, 'subset': 'original', 'is_resampled': False, 'exp_id': 'ROS + LogReg'},
+            {'class': 1, 'count': 3, 'percent': 0.5, 'subset': 'original', 'is_resampled': False, 'exp_id': 'ROS + LogReg'}]
         expected_metrics2 = [
-            {'class': 0, 'count': 5, 'percent': 0.8333333333333334, 'subset': 'test', 'is_resampled': True, 'res_method': 'ros'},
-            {'class': 1, 'count': 1, 'percent': 0.16666666666666666, 'subset': 'test', 'is_resampled': True, 'res_method': 'ros'}]
+            {'class': 0, 'count': 5, 'percent': 0.8333333333333334, 'subset': 'test', 'is_resampled': True, 'exp_id': 'RUS + LogReg'},
+            {'class': 1, 'count': 1, 'percent': 0.16666666666666666, 'subset': 'test', 'is_resampled': True, 'exp_id': 'RUS + LogReg'}]
         expected_list_sum = [
-            {'class': 0, 'count': 3, 'percent': 0.5, 'subset': 'original', 'is_resampled': False, 'res_method': ''},
-            {'class': 1, 'count': 3, 'percent': 0.5, 'subset': 'original', 'is_resampled': False, 'res_method': ''},
-            {'class': 0, 'count': 5, 'percent': 0.8333333333333334, 'subset': 'test', 'is_resampled': True, 'res_method': 'ros'},
-            {'class': 1, 'count': 1, 'percent': 0.16666666666666666, 'subset': 'test', 'is_resampled': True, 'res_method': 'ros'}]
+            {'class': 0, 'count': 3, 'percent': 0.5, 'subset': 'original', 'is_resampled': False, 'exp_id': 'ROS + LogReg'},
+            {'class': 1, 'count': 3, 'percent': 0.5, 'subset': 'original', 'is_resampled': False, 'exp_id': 'ROS + LogReg'},
+            {'class': 0, 'count': 5, 'percent': 0.8333333333333334, 'subset': 'test', 'is_resampled': True, 'exp_id': 'RUS + LogReg'},
+            {'class': 1, 'count': 1, 'percent': 0.16666666666666666, 'subset': 'test', 'is_resampled': True, 'exp_id': 'RUS + LogReg'}]
 
-        actual_metrics1 = get_data_metrics(self.mock_logger, test_data1, 'original')
-        actual_metrics2 = get_data_metrics(self.mock_logger, test_data2, 'test', 'ros')
+        actual_metrics1 = get_data_metrics(self.mock_logger, test_data1, 'original', 'ROS + LogReg')
+        actual_metrics2 = get_data_metrics(self.mock_logger, test_data2, 'test', 'RUS + LogReg', True)
 
         self.assertEqual(self.mock_logger.info.call_count, 2)
         self.assertEqual(actual_metrics1, expected_metrics1)

@@ -10,14 +10,15 @@ def create_message(metric_id: str, metrics: Union[dict, list]):
     return {'message': {'metric_id': metric_id, 'data': metrics}}
 
 
-def get_data_metrics(logger: Logger, y: Series, subset: str, res_method: str = None) -> List[Dict[str, Any]]:
+def get_data_metrics(logger: Logger, y: Series, subset: str, experiment_id: str, is_resampled: bool = False
+                     ) -> List[Dict[str, Any]]:
     metrics = [{
         'class': int(y.value_counts().index[i]),
         'count': int(y.value_counts()[i]),
         'percent': float(y.value_counts()[i] / y.__len__()),
         'subset': subset,
-        'is_resampled': True if res_method else False,
-        'res_method': res_method if res_method else '',
+        'is_resampled': is_resampled,
+        'exp_id': experiment_id,
     } for i in y.unique()]
     logger.info(create_message('dataframe', metrics))
     return metrics
