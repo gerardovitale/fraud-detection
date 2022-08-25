@@ -1,4 +1,3 @@
-import json
 from logging import Logger
 from typing import Any, Dict, List, Union
 
@@ -13,7 +12,7 @@ def create_message(metric_id: str, metrics: Union[dict, list]):
 
 def get_data_metrics(logger: Logger, y: Series, subset: str, res_method: str = None) -> List[Dict[str, Any]]:
     metrics = [{
-        'class': int(y.index[i]),
+        'class': int(y.value_counts().index[i]),
         'count': int(y.value_counts()[i]),
         'percent': float(y.value_counts()[i] / y.__len__()),
         'subset': subset,
