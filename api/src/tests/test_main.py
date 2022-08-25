@@ -1,13 +1,24 @@
 import unittest
 
-from werkzeug.test import Client
-from werkzeug.testapp import test_app
+from tests.client import create_test_client
 
 
 class TestMain(unittest.TestCase):
 
-    def test_expose_metric_data(self):
-        c = Client(test_app)
-        response = c.get("/metric_data.json")
+    def setUp(self) -> None:
+        self.client = create_test_client()
 
-        self.assertEqual(response.status_code, 200)
+    def test_endpoints(self):
+        test_cases = [
+            ('/', 200),
+            ('/home', 200),
+            ('/directory', 200),
+            ('/metric_data.json', 200),
+            ('/model_data.json', 200),
+            ('/dataframe_data.json', 200),
+            ('/not_an_endpoint.json', 404),
+        ]
+
+        for endpoint, code in test_cases:
+            response = self.client.get(endpoint)
+            self.assertEqual(response.status_code, code)

@@ -8,5 +8,5 @@ python -m unittest discover "$CONTAINER_BASE_DIR"/ || exit 1
 if [[ $MODE == 'prod' ]]; then
   echo "***************************************************************************"
   echo "[INFO] executing prod"
-  python -u "$CONTAINER_BASE_DIR"/app/main.py
+  python -u "$CONTAINER_BASE_DIR"/main.py
 fi

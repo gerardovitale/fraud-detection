@@ -1,5 +1,4 @@
 import unittest
-from typing import List, Tuple
 
 from app.services import (filter_metric_data_by_experiment_name,
                           filter_metric_data_by_metric_id, get_all_metric_data)
