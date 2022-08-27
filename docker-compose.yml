@@ -1,0 +1,38 @@
+version: "3"
+
+networks:
+  net:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.0.0/16
+
+services:
+  api:
+    build:
+      context: api
+    image: api-container
+    container_name: api-container
+    networks:
+      net:
+        ipv4_address: 172.28.0.2
+    ports:
+      - "8080:8080"
+    volumes:
+      - $PWD/data/ml_info.log:/app/data/ml_info.log
+    restart: unless-stopped
+
+  notebooks:
+    build:
+      context: notebooks
+    image: jupyter-container
+    container_name: jupyter-container
+    networks:
+      net:
+        ipv4_address: 172.28.0.3
+    ports:
+      - "8888:8888"
+    volumes:
+      - $PWD/notebooks/src:/app/src
+      - $PWD/data:/app/data
+    restart: unless-stopped
