@@ -1,11 +1,12 @@
-from imblearn.over_sampling import RandomOverSampler, SMOTE
+from imblearn.over_sampling import SMOTE, RandomOverSampler
 from imblearn.under_sampling import RandomUnderSampler
-from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import RepeatedStratifiedKFold
 
-from ml_models.config.constants import RANDOM_STATE, N_JOBS
+from ml_models.config.constants import N_JOBS, RANDOM_STATE, N_SPLITS, N_REPEATS
 from ml_models.config.logger import get_logger
-from ml_models.experiment import execute_experiment
+from ml_models.experiment import exec_exp, exec_cross_exp
 from ml_models.load import load_data
 
 
@@ -22,52 +23,35 @@ def main() -> None:
     smote = SMOTE(sampling_strategy='auto', random_state=RANDOM_STATE, k_neighbors=5, n_jobs=N_JOBS)
 
     # estimators
-    log_reg = LogisticRegression(random_state=RANDOM_STATE, max_iter=1000, n_jobs=N_JOBS)
+    lrc = LogisticRegression(random_state=RANDOM_STATE, max_iter=1000, n_jobs=N_JOBS)
     rfc = RandomForestClassifier(max_depth=2, random_state=RANDOM_STATE)
+
+    # cross validation strategy
+    cvs = RepeatedStratifiedKFold(n_splits=N_SPLITS, n_repeats=N_REPEATS, random_state=RANDOM_STATE)
     
     ## experiment_id standard model => <resampling_strategy> + <ml_model> + <additional_method>
 
     # ==================== ==================== ==================== ==================== ====================
-    # ROS + LogisticRegression
-    experiment_id = 'ROS + LogReg'
-    logger.debug('[{0}] Starting experiment'.format(experiment_id))
-    execute_experiment(experiment_id, X, y, ros, log_reg)
-    logger.debug('[{0}] Experiment finished'.format(experiment_id))
+    # basic experiments
+    exec_exp('ROS + LogReg', X, y, ros, lrc)
+    exec_exp('RUS + LogReg', X, y, rus, lrc)
+    exec_exp('SMOTE + LogReg', X, y, smote, lrc)
+
+    exec_exp('ROS + RanFor', X, y, ros, rfc)
+    exec_exp('RUS + RanFor', X, y, rus, rfc)
+    exec_exp('SMOTE + RanFor', X, y, smote, rfc)
 
     # ==================== ==================== ==================== ==================== ====================
-    # RUS + LogisticRegression
-    experiment_id = 'RUS + LogReg'
-    logger.debug('[{0}] Starting experiment'.format(experiment_id))
-    execute_experiment(experiment_id, X, y, rus, log_reg)
-    logger.debug('[{0}] Experiment finished'.format(experiment_id))
+    # experiments using a cross validation strategy
+    exec_cross_exp('LogReg + Cross', X, y, None, lrc, cvs)
+    exec_cross_exp('ROS + LogReg + Cross', X, y, ros, lrc, cvs)
+    exec_cross_exp('RUS + LogReg + Cross', X, y, rus, lrc, cvs)
+    exec_cross_exp('SMOTE + LogReg + Cross', X, y, smote, lrc, cvs)
 
-    # ==================== ==================== ==================== ==================== ====================
-    # SMOTE + LogisticRegression
-    experiment_id = 'SMOTE + LogReg'
-    logger.debug('[{0}] Starting experiment'.format(experiment_id))
-    execute_experiment(experiment_id, X, y, smote, log_reg)
-    logger.debug('[{0}] Experiment finished'.format(experiment_id))
-
-    # ==================== ==================== ==================== ==================== ====================
-    # ROS + RandomForest
-    experiment_id = 'ROS + RanFor'
-    logger.debug('[{0}] Starting experiment'.format(experiment_id))
-    execute_experiment(experiment_id, X, y, ros, rfc)
-    logger.debug('[{0}] Experiment finished'.format(experiment_id))
-
-    # ==================== ==================== ==================== ==================== ====================
-    # RUS + RandomForest
-    experiment_id = 'RUS + RanFor'
-    logger.debug('[{0}] Starting experiment'.format(experiment_id))
-    execute_experiment(experiment_id, X, y, rus, rfc)
-    logger.debug('[{0}] Experiment finished'.format(experiment_id))
-
-    # ==================== ==================== ==================== ==================== ====================
-    # SMOTE + RandomForest
-    experiment_id = 'SMOTE + RanFor'
-    logger.debug('[{0}] Starting experiment'.format(experiment_id))
-    execute_experiment(experiment_id, X, y, smote, rfc)
-    logger.debug('[{0}] Experiment finished'.format(experiment_id))
+    exec_cross_exp('RanFor + Cross', X, y, None, rfc, cvs)
+    exec_cross_exp('ROS + RanFor + Cross', X, y, ros, rfc, cvs)
+    exec_cross_exp('RUS + RanFor + Cross', X, y, rus, rfc, cvs)
+    exec_cross_exp('SMOTE + RanFor + Cross', X, y, smote, rfc, cvs)
 
 
 if __name__ == '__main__':

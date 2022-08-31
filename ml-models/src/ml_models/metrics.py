@@ -3,7 +3,7 @@ from typing import Any, Dict, List, Union
 
 from imblearn.metrics import geometric_mean_score
 from pandas import Series
-from sklearn.metrics import f1_score, precision_score, recall_score, roc_auc_score
+from sklearn.metrics import f1_score, make_scorer, precision_score, recall_score, roc_auc_score
 
 
 def create_message(metric_id: str, metrics: Union[dict, list]):
@@ -37,3 +37,18 @@ def get_model_metrics(logger: Logger, y_test: Series, y_pred: Series, experiment
     }
     logger.info(create_message('model', metrics))
     return metrics
+
+
+def get_cross_scores():
+    return {
+        'f1': make_scorer(f1_score, greater_is_better=True),
+        'recall': make_scorer(recall_score, greater_is_better=True),
+        'precision': make_scorer(precision_score, greater_is_better=True),
+        'roc_auc': make_scorer(roc_auc_score, greater_is_better=True),
+        'geometric_mean_score': make_scorer(geometric_mean_score, greater_is_better=True)
+    }
+
+
+def cast_cross_scores(scores: Dict[str, Any]) -> Dict[str, List[float]]:
+    def cast_score_list(arr: list): return [float(value) for value in arr]
+    return {key: cast_score_list(score_list) for key, score_list in scores.items()}
