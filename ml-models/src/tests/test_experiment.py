@@ -42,25 +42,42 @@ class TestExperiment(TestCase):
         resampling_strategy.fit_resample.assert_called_once()
         self.assertEqual(estimator.fit_call_list.__len__(), 2)
         self.assertEqual(estimator.predict_call_list.__len__(), 2)
-        self.assertEqual(self.mock_get_data_metrics.call_count, 6)
+        self.assertEqual(self.mock_get_data_metrics.call_count, 4)
         self.assertEqual(self.mock_get_model_metrics.call_count, 2)
 
     def test_exec_cross_exp(self):
         X, y = load_data(TEST_DATA_PATH)
         resampling_strategy = MagicMock()
-        resampling_strategy.fit_resample.return_value = X, y
         estimator = MockEstimator()
         cv_strategy = MagicMock()
 
         exec_cross_exp(
-            'test + experiment', X, y, 
+            'test + experiment', X, y,
             resampling_strategy,
             estimator, cv_strategy)
 
-        self.mock_get_cross_scores.assert_called_once()
         self.mock_pipeline.assert_called_once_with(
             [('resampling', resampling_strategy), ('estimator', estimator)])
-        self.mock_cross_validate.assert_called_once_with(
-            self.mock_pipeline(), X, y, scoring=self.mock_get_cross_scores(), 
-            cv=cv_strategy, n_jobs=N_JOBS)
+        self.mock_get_cross_scores.assert_called_once()
+        self.mock_cross_validate.assert_called_once()
         self.mock_cast_cross_scores.assert_called_once()
+        self.mock_pipeline().fit.assert_called_once()
+        self.mock_pipeline().predict.assert_called_once()
+        self.mock_get_model_metrics.assert_called_once()
+
+    def test_exec_cross_epx_when_resampling_strategy_is_none(self):
+        X, y = load_data(TEST_DATA_PATH)
+        estimator = MockEstimator()
+        cv_strategy = MagicMock()
+
+        exec_cross_exp(
+            'test + experiment', X, y,
+            None, estimator, cv_strategy)
+
+        self.mock_pipeline.assert_not_called()
+        self.mock_get_cross_scores.assert_called_once()
+        self.mock_cross_validate.assert_called_once()
+        self.mock_cast_cross_scores.assert_called_once()
+        self.assertEqual(estimator.fit_call_list.__len__(), 1)
+        self.assertEqual(estimator.predict_call_list.__len__(), 1)
+        self.mock_get_model_metrics.assert_called_once()

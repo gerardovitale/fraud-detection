@@ -43,12 +43,12 @@ def main() -> None:
 
     # ==================== ==================== ==================== ==================== ====================
     # experiments using a cross validation strategy
-    exec_cross_exp('LogReg + Cross', X, y, None, lrc, cvs)
+    exec_cross_exp('None + LogReg + Cross', X, y, None, lrc, cvs)
     exec_cross_exp('ROS + LogReg + Cross', X, y, ros, lrc, cvs)
     exec_cross_exp('RUS + LogReg + Cross', X, y, rus, lrc, cvs)
     exec_cross_exp('SMOTE + LogReg + Cross', X, y, smote, lrc, cvs)
 
-    exec_cross_exp('RanFor + Cross', X, y, None, rfc, cvs)
+    exec_cross_exp('None + RanFor + Cross', X, y, None, rfc, cvs)
     exec_cross_exp('ROS + RanFor + Cross', X, y, ros, rfc, cvs)
     exec_cross_exp('RUS + RanFor + Cross', X, y, rus, rfc, cvs)
     exec_cross_exp('SMOTE + RanFor + Cross', X, y, smote, rfc, cvs)
