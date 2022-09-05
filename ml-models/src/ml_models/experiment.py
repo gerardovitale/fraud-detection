@@ -7,11 +7,34 @@ from sklearn.base import BaseEstimator
 from sklearn.model_selection import (GridSearchCV, cross_validate,
                                      train_test_split)
 
-from ml_models.config.constants import N_JOBS, RANDOM_STATE, TEST_SIZE
+from ml_models.config.constants import N_JOBS, RANDOM_STATE, SCORING, TEST_SIZE
 from ml_models.config.logger import get_logger
-from ml_models.metrics import (cast_cross_scores, create_message,
-                               get_cross_scores, get_data_metrics,
-                               get_model_metrics)
+from ml_models.metrics import (cast_scores, create_message, get_cross_scores,
+                               get_data_metrics, get_model_metrics)
+
+
+def exec_grid_exp(exp_id: str, X: DataFrame, y: Series, res_strategy: BaseSampler,
+                  estimator: BaseEstimator, cv_strategy, grid_params: dict, prefered_metric='f1') -> None:
+
+    logger = get_logger(exp_id)
+    logger.debug('[{0}] Starting experiment'.format(exp_id))
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE)
+
+    if res_strategy:
+        estimator = Pipeline(
+            [('resampling', res_strategy), ('estimator', estimator)])
+
+    grid = GridSearchCV(
+        estimator, grid_params, scoring=SCORING, cv=cv_strategy,
+        refit=prefered_metric, n_jobs=N_JOBS, return_train_score=True)
+    grid.fit(X_train, y_train)
+
+    logger.info(create_message('grid_cv_results', cast_scores(grid.cv_results_)))
+    logger.info(create_message('grid_best_params', grid.best_params_))
+
+    logger.debug('[{0}] Experiment finished'.format(exp_id))
 
 
 def exec_cross_exp(exp_id: str, X: DataFrame, y: Series, resampling_strategy: BaseSampler,
@@ -30,7 +53,7 @@ def exec_cross_exp(exp_id: str, X: DataFrame, y: Series, resampling_strategy: Ba
 
     scores: dict = cross_validate(
         estimator, X_train, y_train, scoring=get_cross_scores(), cv=cv_strategy, n_jobs=N_JOBS)
-    scores = cast_cross_scores(scores)
+    scores = cast_scores(scores)
     scores.update({'exp_id': exp_id})
     logger.info(create_message('cross', scores))
 

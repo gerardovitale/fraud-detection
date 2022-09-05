@@ -1,4 +1,5 @@
 from logging import Logger
+from numbers import Number
 from typing import Any, Dict, List, Union
 
 from imblearn.metrics import geometric_mean_score
@@ -49,6 +50,7 @@ def get_cross_scores():
     }
 
 
-def cast_cross_scores(scores: Dict[str, Any]) -> Dict[str, List[float]]:
-    def cast_score_list(arr: list): return [float(value) for value in arr]
+def cast_scores(scores: Dict[str, Any]) -> Dict[str, List[float]]:
+    def cast_score_list(arr: list): 
+        return [float(value) if isinstance(value, Number) else value for value in arr]
     return {key: cast_score_list(score_list) for key, score_list in scores.items()}

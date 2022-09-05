@@ -1,12 +1,13 @@
 from imblearn.over_sampling import SMOTE, RandomOverSampler
 from imblearn.under_sampling import RandomUnderSampler
+from numpy import logspace
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import RepeatedStratifiedKFold
 
-from ml_models.config.constants import N_JOBS, RANDOM_STATE, N_SPLITS, N_REPEATS
+from ml_models.config.constants import N_JOBS, N_REPEATS, N_SPLITS, RANDOM_STATE
 from ml_models.config.logger import get_logger
-from ml_models.experiment import exec_exp, exec_cross_exp
+from ml_models.experiment import exec_grid_exp
 from ml_models.load import load_data
 
 
@@ -27,31 +28,21 @@ def main() -> None:
     rfc = RandomForestClassifier(max_depth=2, random_state=RANDOM_STATE)
 
     # cross validation strategy
-    cvs = RepeatedStratifiedKFold(n_splits=N_SPLITS, n_repeats=N_REPEATS, random_state=RANDOM_STATE)
-    
-    ## experiment_id standard model => <resampling_strategy> + <ml_model> + <additional_method>
+    cvs = RepeatedStratifiedKFold(
+        n_splits=N_SPLITS, n_repeats=N_REPEATS, random_state=RANDOM_STATE)
 
-    # ==================== ==================== ==================== ==================== ====================
-    # basic experiments
-    exec_exp('ROS + LogReg', X, y, ros, lrc)
-    exec_exp('RUS + LogReg', X, y, rus, lrc)
-    exec_exp('SMOTE + LogReg', X, y, smote, lrc)
+    # grid params
+    grid_param_lrc = {'C': logspace(-3, 1.1, 10),}
+    grid_param_res_lrc = {
+        'resampling__sampling_strategy': ['minority', 'not minority', 'not majority', 'all'],
+        'estimator__C': logspace(-3, 1.1, 10)
+    }
 
-    exec_exp('ROS + RanFor', X, y, ros, rfc)
-    exec_exp('RUS + RanFor', X, y, rus, rfc)
-    exec_exp('SMOTE + RanFor', X, y, smote, rfc)
-
-    # ==================== ==================== ==================== ==================== ====================
-    # experiments using a cross validation strategy
-    exec_cross_exp('None + LogReg + Cross', X, y, None, lrc, cvs)
-    exec_cross_exp('ROS + LogReg + Cross', X, y, ros, lrc, cvs)
-    exec_cross_exp('RUS + LogReg + Cross', X, y, rus, lrc, cvs)
-    exec_cross_exp('SMOTE + LogReg + Cross', X, y, smote, lrc, cvs)
-
-    exec_cross_exp('None + RanFor + Cross', X, y, None, rfc, cvs)
-    exec_cross_exp('ROS + RanFor + Cross', X, y, ros, rfc, cvs)
-    exec_cross_exp('RUS + RanFor + Cross', X, y, rus, rfc, cvs)
-    exec_cross_exp('SMOTE + RanFor + Cross', X, y, smote, rfc, cvs)
+    # experiment_id standard model => <resampling_strategy> + <ml_model> + <additional_method>
+    exec_grid_exp('None + LogReg + Grid', X, y, None, lrc, cvs, grid_param_lrc)
+    exec_grid_exp('ROS + LogReg + Grid', X, y, ros, lrc, cvs, grid_param_res_lrc)
+    exec_grid_exp('RUS + LogReg + Grid', X, y, rus, lrc, cvs, grid_param_res_lrc)
+    exec_grid_exp('SMOTE + LogReg + Grid', X, y, smote, lrc, cvs, grid_param_res_lrc)
 
 
 if __name__ == '__main__':

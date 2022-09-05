@@ -6,7 +6,7 @@ from unittest.mock import MagicMock, call, patch
 import numpy as np
 from pandas import Series
 
-from ml_models.metrics import get_data_metrics, get_model_metrics, get_cross_scores, cast_cross_scores
+from ml_models.metrics import get_data_metrics, get_model_metrics, get_cross_scores, cast_scores
 
 
 class TestMetrics(unittest.TestCase):
@@ -84,24 +84,29 @@ class TestMetrics(unittest.TestCase):
         self.assertIn(call(self.mock_gmean, greater_is_better=True), self.mock_make_scorer.call_args_list)
         self.assertEqual(expected_keys, list(actual_scores.keys()))
 
-    def test_cast_cross_scores(self):
+    def test_cast_scores(self):
         scores = {
             'metric1': np.array([1,2,3,4,5]),
             'metric2': np.array([6,7,10]),
             'metric3': np.array([0,0,0,0,0]),
             'metric4': np.array([]),
-            'metric5': np.array([np.NaN])}
+            'metric5': np.array([np.NaN]),
+            'metric6': [{'test_param1': 0.001}, {'test_param2': 0}],
+        }
         expected_cast_scores = {
             'metric1': [1.0, 2.0, 3.0, 4.0, 5.0],
             'metric2': [6.0, 7.0, 10.0],
             'metric3': [0.0, 0.0, 0.0, 0.0, 0.0],
             'metric4': [],
-            'metric5': [nan]}
+            'metric5': [nan],
+            'metric6': [{'test_param1': 0.001}, {'test_param2': 0}],
+        }
 
-        actual_cats_scores = cast_cross_scores(scores)
+        actual_cats_scores = cast_scores(scores)
 
         self.assertEqual(expected_cast_scores['metric1'], actual_cats_scores['metric1'])
         self.assertEqual(expected_cast_scores['metric2'], actual_cats_scores['metric2'])
         self.assertEqual(expected_cast_scores['metric3'], actual_cats_scores['metric3'])
         self.assertEqual(expected_cast_scores['metric4'], actual_cats_scores['metric4'])
         self.assertTrue(math.isnan(actual_cats_scores['metric5'][0]))
+        self.assertEqual(expected_cast_scores['metric6'], actual_cats_scores['metric6'])
