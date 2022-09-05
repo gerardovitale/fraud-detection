@@ -17,6 +17,7 @@ class TestMain(unittest.TestCase):
             ('/model_data.json', 200),
             ('/dataframe_data.json', 200),
             ('/not_an_endpoint.json', 404),
+            ('/cross_model_data.json', 200),
         ]
 
         for endpoint, code in test_cases:
