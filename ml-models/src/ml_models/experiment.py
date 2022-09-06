@@ -31,8 +31,13 @@ def exec_grid_exp(exp_id: str, X: DataFrame, y: Series, res_strategy: BaseSample
         refit=prefered_metric, n_jobs=N_JOBS, return_train_score=True)
     grid.fit(X_train, y_train)
 
-    logger.info(create_message('grid_cv_results', cast_scores(grid.cv_results_)))
-    logger.info(create_message('grid_best_params', grid.best_params_))
+    grid_result = cast_scores(grid.cv_results_)
+    grid_result.update({'exp_id': exp_id})
+    logger.info(create_message('grid_cv_results', grid_result))
+
+    best_params = grid.best_params_
+    best_params.update({'exp_id': exp_id})
+    logger.info(create_message('grid_best_params', best_params))
 
     logger.debug('[{0}] Experiment finished'.format(exp_id))
 
