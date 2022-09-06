@@ -13,7 +13,7 @@ TEST_SIZE = 0.33
 
 # ml model params
 MAX_DEPTH = 3
-ITER = 2500
+ITER = 3500
 N_JOBS = -1
 
 # cross validation params
