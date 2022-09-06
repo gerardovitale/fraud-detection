@@ -18,6 +18,7 @@ def home_directory():
             'get_model_data': 'http://localhost:8080/model_data.json',
             'get_dataframe_data': 'http://localhost:8080/dataframe_data.json',
             'get_cross_model_data': 'http://localhost:8080/cross_model_data.json',
+            'get_grid_cv_results_model_data': 'http://localhost:8080/grid_cv_results_model_data.json',
         }
     })
 
@@ -41,6 +42,11 @@ def get_model_data():
 @app.route("/cross_model_data.json", methods=['GET'])
 def get_cross_model_data():
     return jsonify({'result': filter_metric_data_by_metric_id(get_all_metric_data(), 'cross')})
+
+
+@app.route("/grid_cv_results_model_data.json", methods=['GET'])
+def get_grid_cv_results_model_data():
+    return jsonify({'result': filter_metric_data_by_metric_id(get_all_metric_data(), 'grid_cv_results')})
 
 
 if __name__ == "__main__":
