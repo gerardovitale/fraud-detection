@@ -57,7 +57,7 @@ class TestMetrics(unittest.TestCase):
     def test_get_model_metrics(self):
         test_y_test = Series(data=[0, 1, 0, 0, 1, 1])
         test_y_pred = Series(data=[0, 0, 0, 0, 0, 1])
-        expected_keys = ['is_resampled', 'exp_id', 'f_score', 'recall', 'precision', 'g_mean', 'roc_auc_score']
+        expected_keys = ['is_resampled', 'exp_id', 'f_score', 'recall', 'precision', 'specificity', 'g_mean', 'roc_auc_score']
 
         actual_metrics = get_model_metrics(self.mock_logger, test_y_test, test_y_pred, 'test_exp', True)
 
@@ -72,7 +72,7 @@ class TestMetrics(unittest.TestCase):
         self.assertEqual('test_exp', actual_metrics['exp_id'])
     
     def test_get_cross_scores(self):
-        expected_keys = ['f1', 'recall', 'precision', 'roc_auc', 'geometric_mean_score']
+        expected_keys = ['f1', 'recall', 'precision', 'specificity', 'roc_auc', 'geometric_mean_score']
 
         actual_scores = get_cross_scores()
 

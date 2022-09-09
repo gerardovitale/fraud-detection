@@ -1,5 +1,3 @@
-from typing import Dict, List
-
 from imblearn.base import BaseSampler
 from imblearn.pipeline import Pipeline
 from pandas import DataFrame, Series
@@ -7,7 +5,7 @@ from sklearn.base import BaseEstimator
 from sklearn.model_selection import (GridSearchCV, cross_validate,
                                      train_test_split)
 
-from ml_models.config.constants import N_JOBS, RANDOM_STATE, SCORING, TEST_SIZE
+from ml_models.config.constants import N_JOBS, RANDOM_STATE, TEST_SIZE
 from ml_models.config.logger import get_logger
 from ml_models.metrics import (cast_scores, create_message, get_cross_scores,
                                get_data_metrics, get_model_metrics)
@@ -19,7 +17,7 @@ def exec_grid_exp(exp_id: str, X: DataFrame, y: Series, res_strategy: BaseSample
     logger = get_logger(exp_id)
     logger.debug('[{0}] Starting experiment'.format(exp_id))
 
-    X_train, X_test, y_train, y_test = train_test_split(
+    X_train, _, y_train, _ = train_test_split(
         X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE)
 
     if res_strategy:
@@ -27,7 +25,7 @@ def exec_grid_exp(exp_id: str, X: DataFrame, y: Series, res_strategy: BaseSample
             [('resampling', res_strategy), ('estimator', estimator)])
 
     grid = GridSearchCV(
-        estimator, grid_params, scoring=SCORING, cv=cv_strategy,
+        estimator, grid_params, scoring=get_cross_scores(), cv=cv_strategy,
         refit=prefered_metric, n_jobs=N_JOBS, return_train_score=True)
     grid.fit(X_train, y_train)
 

@@ -2,9 +2,10 @@ from logging import Logger
 from numbers import Number
 from typing import Any, Dict, List, Union
 
-from imblearn.metrics import geometric_mean_score
+from imblearn.metrics import geometric_mean_score, specificity_score
 from pandas import Series
-from sklearn.metrics import f1_score, make_scorer, precision_score, recall_score, roc_auc_score
+from sklearn.metrics import (f1_score, make_scorer, precision_score,
+                             recall_score, roc_auc_score)
 
 
 def create_message(metric_id: str, metrics: Union[dict, list]):
@@ -33,6 +34,7 @@ def get_model_metrics(logger: Logger, y_test: Series, y_pred: Series, experiment
         'f_score': float(f1_score(y_test, y_pred)),
         'recall': float(recall_score(y_test, y_pred)),
         'precision': float(precision_score(y_test, y_pred)),
+        'specificity': float(specificity_score(y_test, y_pred)),
         'g_mean': float(geometric_mean_score(y_test, y_pred)),
         'roc_auc_score': float(roc_auc_score(y_test, y_pred)),
     }
@@ -45,6 +47,7 @@ def get_cross_scores():
         'f1': make_scorer(f1_score, greater_is_better=True),
         'recall': make_scorer(recall_score, greater_is_better=True),
         'precision': make_scorer(precision_score, greater_is_better=True),
+        'specificity': make_scorer(specificity_score, greater_is_better=True),
         'roc_auc': make_scorer(roc_auc_score, greater_is_better=True),
         'geometric_mean_score': make_scorer(geometric_mean_score, greater_is_better=True)
     }
