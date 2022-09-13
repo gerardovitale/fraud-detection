@@ -1,7 +1,8 @@
 import unittest
 
 from app.services import (filter_metric_data_by_experiment_name,
-                          filter_metric_data_by_metric_id, get_all_metric_data)
+                          filter_metric_data_by_metric_id, get_all_metric_data,
+                          get_grid_data_per_sampling_strategy)
 
 
 class TestServices(unittest.TestCase):
@@ -49,3 +50,11 @@ class TestServices(unittest.TestCase):
                 self.assertFalse(actual_data)
             else:
                 self.assertTrue(actual_data)
+    
+    def test_get_grid_data_per_sampling_strategy(self):
+
+        data = get_grid_data_per_sampling_strategy()
+
+        self.assertIsInstance(data.get('index'), list)
+        self.assertIsInstance(data.get('columns'), list)
+        self.assertIsInstance(data.get('data'), list)

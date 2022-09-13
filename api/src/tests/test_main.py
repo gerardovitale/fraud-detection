@@ -19,6 +19,7 @@ class TestMain(unittest.TestCase):
             ('/not_an_endpoint.json', 404),
             ('/cross_model_data.json', 200),
             ('/grid_cv_results_model_data.json', 200),
+            ('/grid_data_per_sampling_strategy.json', 200),
         ]
 
         for endpoint, code in test_cases:

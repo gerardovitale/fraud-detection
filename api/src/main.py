@@ -1,11 +1,19 @@
+import pandas as pd
 from flask import Flask, jsonify
 from flask_cors import CORS, cross_origin
 
-from app.services import filter_metric_data_by_metric_id, get_all_metric_data
+from app.services import (filter_metric_data_by_metric_id, get_all_metric_data,
+                          get_grid_data_per_sampling_strategy)
 
 app = Flask(__name__)
-cors = CORS(app, resources={
-            r"/metric_data.json": {"origins": "http://localhost:port"}})
+cors = CORS(
+    app,
+    resources={
+        r"/metric_data.json": {"origins": "http://localhost:port"},
+        r"/grid_cv_results_model_data.json": {"origins": "http://localhost:port"},
+        r"/grid_data_per_sampling_strategy.json": {"origins": "http://localhost:port"},
+    }
+)
 
 
 @app.route("/", methods=['GET'])
@@ -19,6 +27,7 @@ def home_directory():
             'get_dataframe_data': 'http://localhost:8080/dataframe_data.json',
             'get_cross_model_data': 'http://localhost:8080/cross_model_data.json',
             'get_grid_cv_results_model_data': 'http://localhost:8080/grid_cv_results_model_data.json',
+            'get_grid_data_per_sampling_strategy': 'http://localhost:8080/grid_data_per_sampling_strategy.json',
         }
     })
 
@@ -45,8 +54,18 @@ def get_cross_model_data():
 
 
 @app.route("/grid_cv_results_model_data.json", methods=['GET'])
+@cross_origin(origin='localhost', headers=['Content-Type'])
 def get_grid_cv_results_model_data():
-    return jsonify({'result': filter_metric_data_by_metric_id(get_all_metric_data(), 'grid_cv_results')})
+    return jsonify(
+        {'result': filter_metric_data_by_metric_id(
+            data=get_all_metric_data(), metric_id='grid_cv_results')}
+    )
+
+
+@app.route("/grid_data_per_sampling_strategy.json", methods=['GET'])
+@cross_origin(origin='localhost', headers=['Content-Type'])
+def grid_data_per_sampling_strategy():
+    return jsonify({'result': get_grid_data_per_sampling_strategy()})
 
 
 if __name__ == "__main__":
