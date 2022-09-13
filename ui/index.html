@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Fraud Detection Project Visualizations">
+    <meta name="author" content="Gerardo Vitale">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300" rel="stylesheet" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="src/css/style.css">
+    <title>TFM Dashboards</title>
+</head>
+
+<body>
+    <h1>Dashboards</h1>
+    <p>TFM Result Visualizations</p>
+    <hr>
+    <h2 class="loading">Loading...</h2>
+
+    <section class="cols-1">
+        <figure>
+            <h3>Logistic Regression Test Metric Scores</h3>
+            <canvas id="LogRegTestMetricScores"></canvas>
+        </figure>
+        <figure>
+            <h3>Random Forest Test Metric Scores</h3>
+            <canvas id="RanForTestMetricScores"></canvas>
+        </figure>
+    </section>
+
+    <h2>Mean Test Metrics Variation Vs. Sampling Strategy Float Ratio</h2>
+    <section class="cols-2">
+        <figure>
+            <h3>F-Score</h3>
+            <canvas id="f1PerSamplingStartegy"></canvas>
+        </figure>
+        <figure>
+            <h3>G-Mean</h3>
+            <canvas id="gMeanPerSamplingStartegy"></canvas>
+        </figure>
+        <figure>
+            <h3>ROC AUC</h3>
+            <canvas id="rocAucPerSamplingStartegy"></canvas>
+        </figure>
+    </section>
+
+    <section class="cols-3">
+        <figure>
+            <h3>Precision</h3>
+            <canvas id="precisionPerSamplingStartegy"></canvas>
+        </figure>
+        <figure>
+            <h3>Recall</h3>
+            <canvas id="recallPerSamplingStartegy"></canvas>
+        </figure>
+        <figure>
+            <h3>Specificity</h3>
+            <canvas id="specificityPerSamplingStartegy"></canvas>
+        </figure>
+    </section>
+</body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+<script src="src/fetchGridCvResults.js" type="application/javascript"></script>
+<script src="src/fetchGridCvResultsPerSamplingStrategy.js" type="application/javascript"></script>
+<script src="src/displayChart.js" type="application/javascript"></script>
+<script src="src/getGridCvData.js" type="application/javascript"></script>
+<script src="src/chartStyles.js" type="application/javascript"></script>
+
+</html>
