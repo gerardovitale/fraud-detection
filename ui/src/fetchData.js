@@ -9,7 +9,6 @@ function run() {
             displayMetricsPerSamplingStrategyCharts,
         ]
     }
-
     dashboards.urls.map((url, index) => {
         const request = new Request(url, {
             method: 'GET',
@@ -17,7 +16,6 @@ function run() {
             mode: 'cors',
             cache: 'default',
         });
-
         fetch(request)
             .then(response => response.json())
             .then(data => dashboards.chartFunctions[index](data))

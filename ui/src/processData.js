@@ -6,7 +6,6 @@ function getTestMetricScoresRecordsByExpID(rawData, expID) {
     const data = rawData.map(eachRecord => eachRecord.message.data);
     const expIDs = data.filter(eachRecord => eachRecord.exp_id.includes(expID))
         .map(eachRecord => eachRecord.exp_id);
-
     return expIDs.map((expId, index) => {
         return {
             label: expId,
