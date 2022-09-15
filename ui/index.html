@@ -8,7 +8,8 @@
     <meta name="description" content="Fraud Detection Project Visualizations">
     <meta name="author" content="Gerardo Vitale">
     <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300" rel="stylesheet" />
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
     <link rel="stylesheet" href="src/css/style.css">
     <title>TFM Dashboards</title>
 </head>
@@ -16,7 +17,38 @@
 <body>
     <h1>Dashboards</h1>
     <p>TFM Result Visualizations</p>
+
     <hr>
+
+    <div class="btn-toolbar col-6 mx-auto" role="toolbar" aria-label="Toolbar with button groups">
+        <div class="btn-group me-2" role="group" aria-label="First group">
+            <input type="checkbox" checked class="btn-check" id="ROS" autocomplete="off"
+                onclick="updateCharts(this);">
+            <label class="btn btn-outline-primary" for="ROS">ROS</label>
+
+            <input type="checkbox" checked class="btn-check" id="RUS" autocomplete="off"
+                onclick="updateCharts(this);">
+            <label class="btn btn-outline-primary" for="RUS">RUS</label>
+
+            <input type="checkbox" checked class="btn-check" id="SMOTE" autocomplete="off"
+                onclick="updateCharts(this);">
+            <label class="btn btn-outline-primary" for="SMOTE">SMOTE</label>
+
+        </div>
+        <div class="btn-group me-2" role="group" aria-label="Second group">
+            <input type="checkbox" checked class="btn-check" id="LogReg" autocomplete="off"
+                onclick="updateCharts(this);">
+            <label class="btn btn-outline-primary" for="LogReg">Logistic Regression</label>
+
+            <input type="checkbox" checked class="btn-check" id="RanFor" autocomplete="off"
+                onclick="updateCharts(this);">
+            <label class="btn btn-outline-primary" for="RanFor">Random Forest</label>
+
+        </div>
+    </div>
+
+    <br>
+
     <h2 class="loading">Loading...</h2>
 
     <section class="cols-1">
@@ -62,11 +94,14 @@
     </section>
 </body>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8"
+    crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
-<script src="src/fetchGridCvResults.js" type="application/javascript"></script>
-<script src="src/fetchGridCvResultsPerSamplingStrategy.js" type="application/javascript"></script>
-<script src="src/displayChart.js" type="application/javascript"></script>
+
 <script src="src/getGridCvData.js" type="application/javascript"></script>
+<script src="src/displayChart.js" type="application/javascript"></script>
 <script src="src/chartStyles.js" type="application/javascript"></script>
+<script src="src/fetchData.js" type="application/javascript"></script>
 
 </html>

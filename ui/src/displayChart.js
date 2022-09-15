@@ -4,6 +4,19 @@ Chart.defaults.global.elements.rectangle.borderWidth = 1
 Chart.defaults.scale.gridLines.color = '#444'
 
 
+function updateCharts(element) {
+    if (!element.checked) {
+        console.log('Here needs to be the logic to update the charts!!');
+
+        // let ctx = document.getElementById('LogRegTestMetricScores').getContext('2d');
+        // const chart = new Chart('LogRegTestMetricScores', { title: { text: 'barChart' } });
+
+        // console.log(chart.data);
+        // // chart.update();
+    }
+}
+
+
 function displayMeanTestMetricCharts(data) {
     document.body.classList.add('running');
 
