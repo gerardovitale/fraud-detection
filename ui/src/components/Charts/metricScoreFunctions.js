@@ -1,4 +1,4 @@
-import { styles } from '../chartStyles';
+import { styles } from './chartStyles';
 
 
 export const meanTestMetrics = [
@@ -22,4 +22,22 @@ export const getMeanTestMetricScores = (rawData) => {
 const getMean = (eachRecord) => {
   return meanTestMetrics.map(meanTestMetric => eachRecord[meanTestMetric]
     .reduce((a, b) => a + b, 0) / eachRecord[meanTestMetric].length);
+};
+
+
+export const getMetricScoresPerSamplingStartegyByMetric = (rawData, metric) => {
+  const metricIndex = rawData.columns.indexOf(metric);
+  const expIndex = rawData.columns.indexOf('exp_id');
+  const expIDs = rawData.data.map(eachRecord => eachRecord[expIndex])
+    .filter((eachRecord, index, arr) => arr.indexOf(eachRecord) === index);
+  return expIDs.map((expId, index) => {
+    return {
+      label: expId,
+      data: rawData.data.filter(eachRecord => eachRecord[expIndex] == expId)
+        .map(eachRecord => eachRecord[metricIndex]),
+      borderWidth: 1,
+      borderColor: styles.color.solids[index],
+      backgroundColor: styles.color.alphas[index],
+    };
+  });
 };

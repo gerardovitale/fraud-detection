@@ -1,34 +1,32 @@
 import {
-  BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Title,
+  BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement, PointElement, Title,
   Tooltip
 } from 'chart.js';
 import React, { useEffect, useState } from 'react';
-import { Bar } from 'react-chartjs-2';
-import { getMeanTestMetricScores } from './metricScoreFunctions';
+import { Bar, Line } from 'react-chartjs-2';
 
 
 ChartJS.register(
   CategoryScale,
+  PointElement,
   LinearScale,
   BarElement,
+  LineElement,
   Title,
   Tooltip,
   Legend
 );
 
 
-const TFMChart = () => {
+const TFMChart = (props) => {
 
   const [chartData, setChartData] = useState({});
   const [chartOptions, setChartOptions] = useState({});
   const [loading, setLoading] = useState(true);
 
-  const url = 'http://localhost:8080/grid_cv_results_model_data.json';
-  const labels = ['Precision', 'Recall', 'Specificity', 'F-Score', 'G-Score', 'ROC AUC'];
-
   useEffect(() => {
     const fetchData = async () => {
-      const request = new Request(url, {
+      const request = new Request(props.url, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
         mode: 'cors',
@@ -38,10 +36,12 @@ const TFMChart = () => {
       await fetch(request)
         .then(response => response.json())
         .then(rawData => {
-          console.log(rawData);
+          const labels = props.labels;
           const data = {
             labels,
-            datasets: getMeanTestMetricScores(rawData.result),
+            datasets: 'metric' in props ?
+              props.dataProcessor(rawData.result, props.metric) :
+              props.dataProcessor(rawData.result),
           };
           setChartData(data);
           setLoading(false);
@@ -66,9 +66,24 @@ const TFMChart = () => {
     return (<p>Loading...</p>);
   }
 
-  return (
-    <Bar data={chartData} options={chartOptions} />
-  );
+  if (props.chartType === 'bar') {
+    return (
+      <div>
+        <h4>{props.title}</h4>
+        <Bar data={chartData} options={chartOptions} />
+      </div>
+    );
+  }
+
+  if (props.chartType === 'line') {
+    return (
+      <div>
+        <h4>{props.title}</h4>
+        <Line data={chartData} options={chartOptions} />
+      </div>
+    );
+  }
+
 };
 
 export default TFMChart;
