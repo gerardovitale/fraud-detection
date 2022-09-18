@@ -4,7 +4,7 @@ import {
 } from 'chart.js';
 import React, { useEffect, useState } from 'react';
 import { Bar, Line } from 'react-chartjs-2';
-
+import { isHidden } from './metricScoreFunctions';
 
 ChartJS.register(
   CategoryScale,
@@ -25,33 +25,23 @@ const TFMChart = (props) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const request = new Request(props.url, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-        mode: 'cors',
-        cache: 'default',
+    fetch(props.url)
+      .then(response => response.json())
+      .then(rawData => {
+        const labels = props.labels;
+        const data = {
+          labels,
+          datasets: 'metric' in props ?
+            props.dataProcessor(rawData.result, props.metric, props.filters) :
+            props.dataProcessor(rawData.result, props.filters),
+        };
+        setChartData(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log('error', error);
       });
 
-      await fetch(request)
-        .then(response => response.json())
-        .then(rawData => {
-          const labels = props.labels;
-          const data = {
-            labels,
-            datasets: 'metric' in props ?
-              props.dataProcessor(rawData.result, props.metric) :
-              props.dataProcessor(rawData.result),
-          };
-          setChartData(data);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.log('error', error);
-        });
-    };
-
-    fetchData();
     setChartOptions({
       responsive: true,
       plugins: {
@@ -61,6 +51,17 @@ const TFMChart = (props) => {
       }
     });
   }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      setChartData(prevChartData => ({
+        ...prevChartData,
+        datasets: prevChartData.datasets.map(
+          ds => ({ ...ds, hidden: isHidden(props.filters, ds.label) }))
+      }
+      ));
+    }
+  }, [props.filters]);
 
   if (loading) {
     return (<p>Loading...</p>);

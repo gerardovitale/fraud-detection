@@ -6,7 +6,7 @@ export const meanTestMetrics = [
   'mean_test_f1', 'mean_test_geometric_mean_score', 'mean_test_roc_auc',
 ];
 
-export const getMeanTestMetricScores = (rawData) => {
+export const getMeanTestMetricScores = (rawData, filters) => {
   const data = rawData.map(eachRecord => eachRecord.message.data);
   return data.map((eachRecord, index) => {
     return {
@@ -14,18 +14,14 @@ export const getMeanTestMetricScores = (rawData) => {
       data: getMean(eachRecord),
       borderWidth: 1,
       borderColor: styles.color.solids[index],
-      backgroundColor: styles.color.alphas[index]
+      backgroundColor: styles.color.alphas[index],
+      hidden: isHidden(filters, eachRecord.exp_id),
     };
   });
 };
 
-const getMean = (eachRecord) => {
-  return meanTestMetrics.map(meanTestMetric => eachRecord[meanTestMetric]
-    .reduce((a, b) => a + b, 0) / eachRecord[meanTestMetric].length);
-};
 
-
-export const getMetricScoresPerSamplingStartegyByMetric = (rawData, metric) => {
+export const getMetricScoresPerSamplingStartegyByMetric = (rawData, metric, filters) => {
   const metricIndex = rawData.columns.indexOf(metric);
   const expIndex = rawData.columns.indexOf('exp_id');
   const expIDs = rawData.data.map(eachRecord => eachRecord[expIndex])
@@ -38,6 +34,21 @@ export const getMetricScoresPerSamplingStartegyByMetric = (rawData, metric) => {
       borderWidth: 1,
       borderColor: styles.color.solids[index],
       backgroundColor: styles.color.alphas[index],
+      hidden: isHidden(filters, expId),
     };
   });
 };
+
+
+const getMean = (eachRecord) => {
+  return meanTestMetrics.map(meanTestMetric => eachRecord[meanTestMetric]
+    .reduce((a, b) => a + b, 0) / eachRecord[meanTestMetric].length);
+};
+
+
+export const isHidden = (filters, experiment) => {
+  return filters.length > 0 ?
+    filters.map(filter => experiment.includes(filter)).reduce((a, b) => a || b) :
+    false;
+};
+

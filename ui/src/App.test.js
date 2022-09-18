@@ -1,8 +1,11 @@
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('renders learn react link', () => {
-  render(<App />);
-  const figureElement = screen.getByRole('figure');
-  expect(figureElement).toBeInTheDocument();
+describe('App', () => {
+
+  it('it should contain a figure', () => {
+    // render(<App />);
+    // const figureElement = screen.getAllByRole('figure');
+    // expect(figureElement).toHaveLength(2);
+  });
 });

@@ -4,10 +4,12 @@ import './App.css';
 import { getMeanTestMetricScores, getMetricScoresPerSamplingStartegyByMetric } from './components/Charts/metricScoreFunctions';
 import TFMChart from './components/Charts/TFMChart';
 
-function App() {
+
+const App = () => {
+  const [filters, setFilters] = React.useState([]);
+
   const meanTestScoreUrl = 'http://localhost:8080/grid_cv_results_model_data.json';
   const meanTestScoreLabels = ['Precision', 'Recall', 'Specificity', 'F-Score', 'G-Score', 'ROC AUC'];
-
   const samplingStrategyUrl = 'http://localhost:8080/grid_data_per_sampling_strategy.json';
   const samplingStrategyLabels = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1];
   const meanTestMetrics = [
@@ -15,7 +17,20 @@ function App() {
     'mean_test_f1', 'mean_test_geometric_mean_score', 'mean_test_roc_auc',
   ];
   return (
-    <div>
+    <div className='container'>
+      <input type='checkbox' id='LogReg'
+        onClick={(e) => {
+          test(e.target, setFilters);
+        }}
+      />
+      LogReg
+      <button
+        onClick={() => {
+          setFilters(filters => [...filters, 'ROS']);
+        }}
+      >
+        ROS
+      </button>
       <h2>Overall Metric Scores</h2>
       <section>
         <figure>
@@ -25,6 +40,7 @@ function App() {
             labels={meanTestScoreLabels}
             chartType={'bar'}
             dataProcessor={getMeanTestMetricScores}
+            filters={filters}
           />
         </figure>
       </section>
@@ -41,12 +57,19 @@ function App() {
               chartType={'line'}
               dataProcessor={getMetricScoresPerSamplingStartegyByMetric}
               metric={metric}
+              filters={filters}
             />
           </figure>
         ))}
       </section>
     </div>
   );
-}
+};
 
 export default App;
+function test(elem, setFilters) {
+  console.log(elem);
+  if (elem.checked) {
+    setFilters(filters => [...filters, elem.id]);
+  } 
+}
