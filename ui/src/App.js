@@ -3,6 +3,7 @@ import React from 'react';
 import './App.css';
 import { getMeanTestMetricScores, getMetricScoresPerSamplingStartegyByMetric } from './components/Charts/metricScoreFunctions';
 import TFMChart from './components/Charts/TFMChart';
+import Filters from './components/Filters/Filters';
 
 
 const App = () => {
@@ -18,32 +19,16 @@ const App = () => {
   ];
   return (
     <div className='container'>
-      <input type='checkbox' id='LogReg'
-        onClick={(e) => {
-          test(e.target, setFilters);
-        }}
-      />
-      LogReg
-      <button
-        onClick={() => {
-          setFilters(filters => [...filters, 'ROS']);
-        }}
-      >
-        ROS
-      </button>
       <h2>Overall Metric Scores</h2>
-      <section>
-        <figure>
-          <TFMChart
-            title={'Mean Test Scores per Experiment'}
-            url={meanTestScoreUrl}
-            labels={meanTestScoreLabels}
-            chartType={'bar'}
-            dataProcessor={getMeanTestMetricScores}
-            filters={filters}
-          />
-        </figure>
-      </section>
+      <Filters setFilters={setFilters} />
+      <TFMChart
+        title={'Mean Test Scores per Experiment'}
+        url={meanTestScoreUrl}
+        labels={meanTestScoreLabels}
+        chartType={'bar'}
+        dataProcessor={getMeanTestMetricScores}
+        filters={filters}
+      />
 
       <h2>Mean Test Scores Variation Vs. Sampling Strategy Float Ratio Variation</h2>
       <section className='row'>
@@ -67,9 +52,4 @@ const App = () => {
 };
 
 export default App;
-function test(elem, setFilters) {
-  console.log(elem);
-  if (elem.checked) {
-    setFilters(filters => [...filters, elem.id]);
-  } 
-}
+

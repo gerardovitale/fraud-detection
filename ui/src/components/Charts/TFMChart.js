@@ -4,7 +4,7 @@ import {
 } from 'chart.js';
 import React, { useEffect, useState } from 'react';
 import { Bar, Line } from 'react-chartjs-2';
-import { isHidden } from './metricScoreFunctions';
+import { applyFilters } from './metricScoreFunctions';
 
 ChartJS.register(
   CategoryScale,
@@ -32,8 +32,8 @@ const TFMChart = (props) => {
         const data = {
           labels,
           datasets: 'metric' in props ?
-            props.dataProcessor(rawData.result, props.metric, props.filters) :
-            props.dataProcessor(rawData.result, props.filters),
+            props.dataProcessor(rawData.result, props.metric) :
+            props.dataProcessor(rawData.result),
         };
         setChartData(data);
         setLoading(false);
@@ -57,7 +57,7 @@ const TFMChart = (props) => {
       setChartData(prevChartData => ({
         ...prevChartData,
         datasets: prevChartData.datasets.map(
-          ds => ({ ...ds, hidden: isHidden(props.filters, ds.label) }))
+          ds => ({ ...ds, hidden: applyFilters(props.filters, ds.label) }))
       }
       ));
     }
