@@ -11,8 +11,8 @@ const Filters = (props) => {
       </div>
 
       <div className='btn-group me-2' >
-        <FilterCheck setFilters={props.setFilters} id={'LogReg'} name={'Logistic Regression'} />
-        <FilterCheck setFilters={props.setFilters} id={'RanFor'} name={'Random Forest'} />
+        <FilterCheck setFilters={props.setFilters} id={'LR'} name={'Logistic Regression'} />
+        <FilterCheck setFilters={props.setFilters} id={'RFC'} name={'Random Forest'} />
       </div>
     </div>
   );
