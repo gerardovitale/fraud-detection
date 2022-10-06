@@ -12,7 +12,7 @@ from ml_models.metrics import (cast_scores, create_message, get_cross_scores,
 
 
 def exec_grid_exp(exp_id: str, X: DataFrame, y: Series, res_strategy: BaseSampler,
-                  estimator: BaseEstimator, cv_strategy, grid_params: dict, prefered_metric='f1') -> None:
+                  estimator: BaseEstimator, cv_strategy, grid_params: dict, prefered_metric='roc_auc') -> None:
 
     logger = get_logger(exp_id)
     logger.debug('[{0}] Starting experiment'.format(exp_id))
