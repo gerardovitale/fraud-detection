@@ -1,7 +1,7 @@
 import unittest
 
 from tests.client import create_test_client
-
+from tests.expected_outputs import EXPECTED_GRID_BEST_PARAMS
 
 class TestMain(unittest.TestCase):
 
@@ -25,3 +25,11 @@ class TestMain(unittest.TestCase):
         for endpoint, code in test_cases:
             response = self.client.get(endpoint)
             self.assertEqual(response.status_code, code)
+
+    def test_get_grid_best_params(self):
+        response = self.client.get('/grid_best_params.json')
+
+        self.assertEqual(200, response.status_code)
+        self.assertIsInstance(response.get_json(), dict)
+        self.assertEqual(EXPECTED_GRID_BEST_PARAMS[0].keys(), response.get_json().get('result')[0].keys())
+        self.assertEqual(EXPECTED_GRID_BEST_PARAMS[1].keys(), response.get_json().get('result')[-1].keys())

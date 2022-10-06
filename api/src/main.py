@@ -12,6 +12,7 @@ cors = CORS(
         r"/metric_data.json": {"origins": "http://localhost:port"},
         r"/grid_cv_results_model_data.json": {"origins": "http://localhost:port"},
         r"/grid_data_per_sampling_strategy.json": {"origins": "http://localhost:port"},
+        r"/grid_best_params.json": {"origins": "http://localhost:port"},
     }
 )
 
@@ -28,6 +29,7 @@ def home_directory():
             'get_cross_model_data': 'http://localhost:8080/cross_model_data.json',
             'get_grid_cv_results_model_data': 'http://localhost:8080/grid_cv_results_model_data.json',
             'get_grid_data_per_sampling_strategy': 'http://localhost:8080/grid_data_per_sampling_strategy.json',
+            'get_grid_best_params': 'http://localhost:8080/grid_best_params.json',
         }
     })
 
@@ -66,6 +68,13 @@ def get_grid_cv_results_model_data():
 @cross_origin(origin='localhost', headers=['Content-Type'])
 def grid_data_per_sampling_strategy():
     return jsonify({'result': get_grid_data_per_sampling_strategy()})
+
+
+@app.route('/grid_best_params.json', methods=['GET'])
+@cross_origin(origin='localhost', headers=['Content-Type'])
+def get_grid_best_params():
+    return jsonify({'result': filter_metric_data_by_metric_id(
+        data=get_all_metric_data(), metric_id='grid_best_params')})
 
 
 if __name__ == "__main__":
